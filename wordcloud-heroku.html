@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" type="text/css" href="./css/jqcloud.css"/>
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="./lib/jqcloud-1.0.4.min.js"></script>
+    <script>
+
+    var BASE_WEBSERVICE_URL = "http://wordcloud-rest.herokuapp.com/";
+
+    function generateCloud(data) {
+        var word_list =  [];
+        for (var key in data) {
+            word_list.push({text: key, weight: data[key]});
+        }    
+        $(function() {
+            $("#wordcloud").jQCloud(word_list);
+        });     
+    }
+ 
+    $(document).ready(function() {
+        $("#rssCloudButton").click(function() {
+            $("#wordcloud").empty();
+            var rssUrl = $("#rssUrl").val();
+            $.get(BASE_WEBSERVICE_URL + "rss?url=" + rssUrl, function(data, status) {
+                if(status == "success") {
+                    generateCloud(data);    
+                }       
+            });     
+        });
+
+        $("#twitterCloudButton").click(function() {
+            $("#wordcloud").empty();
+            var twitterHashtag = $("#twitterHashtag").val();
+            $.get(BASE_WEBSERVICE_URL + "twitter?hashtag=" + twitterHashtag, function(data, status) {
+                if(status == "success") {
+                    generateCloud(data);
+                }       
+            });     
+        });
+    });
+ 
+    </script>
+    <title>Demo</title>
+</head>
+
+<body>
+    <h1>Word Cloud Demo</h1>
+    <div id="wordcloud" style="width: 550px; height: 350px; border: 1px solid #ccc;"></div>
+    <br>
+    <div>
+        <span>RSS Url: </span><input id="rssUrl" type="text" style="width: 380px;"/><button id="rssCloudButton" type="button">Generate Cloud</button>   
+    </div>    
+    <br>
+    <div>
+        <span>Twitter Hashtag: </span><input id="twitterHashtag" type="text" style="width: 200px;"/><button id="twitterCloudButton" type="button">Generate Cloud</button>   
+    </div>    
+</body>
+ 
+</html>
